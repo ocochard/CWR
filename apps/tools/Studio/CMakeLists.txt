@@ -19,7 +19,7 @@ target_compile_definitions(PoseidonStudio PRIVATE
 )
 
 find_package(SDL3 CONFIG REQUIRED)
-find_package(freetype CONFIG REQUIRED)
+find_package(Freetype REQUIRED)
 find_package(CLI11 CONFIG REQUIRED)
 find_package(imgui CONFIG REQUIRED)
 

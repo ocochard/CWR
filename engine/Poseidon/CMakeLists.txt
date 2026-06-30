@@ -286,23 +286,31 @@ target_link_libraries(Poseidon PRIVATE zstd::libzstd)
 
 # libcurl: the single cross-platform HTTP/HTTPS client for the master-server publisher
 # (Schannel on Windows, OpenSSL elsewhere — see vcpkg.json).
-find_package(CURL CONFIG REQUIRED)
+# Module mode: FreeBSD's ftp/curl ships only libcurl.pc, no CURLConfig.cmake.
+find_package(CURL REQUIRED)
 target_link_libraries(Poseidon PRIVATE CURL::libcurl)
 
-find_package(Opus CONFIG REQUIRED)
-target_link_libraries(Poseidon PUBLIC Opus::opus)
-
-# libogg + libvorbis (vcpkg).  Vorbisfile is the high-level API that
-# WaveStreamOGG.cpp uses (ov_open_callbacks / ov_read / ov_pcm_seek /
-# ov_clear) — pulls in vorbis and ogg transitively.
-find_package(Ogg     CONFIG REQUIRED)
-find_package(Vorbis  CONFIG REQUIRED)
-target_link_libraries(Poseidon PUBLIC Vorbis::vorbisfile Vorbis::vorbis Ogg::ogg)
+# Opus / Ogg / Vorbis: FreeBSD packages ship only pkg-config files
+# (.pc), no CMake config. Use the pkg-config-driven imported targets.
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(opus       REQUIRED IMPORTED_TARGET opus)
+pkg_check_modules(ogg        REQUIRED IMPORTED_TARGET ogg)
+pkg_check_modules(vorbis     REQUIRED IMPORTED_TARGET vorbis)
+pkg_check_modules(vorbisfile REQUIRED IMPORTED_TARGET vorbisfile)
+target_link_libraries(Poseidon PUBLIC
+    PkgConfig::opus
+    PkgConfig::vorbisfile
+    PkgConfig::vorbis
+    PkgConfig::ogg)
 
 find_package(CLI11 CONFIG REQUIRED)
 target_link_libraries(Poseidon PRIVATE CLI11::CLI11)
 
-find_package(freetype CONFIG REQUIRED)
+# Module mode: FreeBSD's print/freetype2 ships freetype-config.cmake which
+# exports a bare "freetype" target rather than the conventional
+# "Freetype::Freetype" name. CMake's bundled FindFreetype.cmake creates
+# the canonical alias.
+find_package(Freetype REQUIRED)
 target_link_libraries(Poseidon PUBLIC Freetype::Freetype)
 
 # stb — PNGWriter/TGAWriter and textures
