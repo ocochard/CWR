@@ -64,6 +64,12 @@ list(APPEND ALL_SOURCES
 
 # Global exclusions
 list(FILTER ALL_SOURCES EXCLUDE REGEX "Memory/MemTable\.cpp$")
+# FreeBSD's libmimalloc.so is built with MI_OVERRIDE=ON and supplies its own
+# operator new/delete. Linking GlobalOperators.cpp on top causes duplicate-symbol
+# errors at link time, so let mimalloc own the global new/delete on this platform.
+if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+    list(FILTER ALL_SOURCES EXCLUDE REGEX "Core/GlobalOperators\.cpp$")
+endif()
 list(FILTER ALL_SOURCES EXCLUDE REGEX ".*soundDummy\.cpp$")
 list(FILTER ALL_SOURCES EXCLUDE REGEX "Audio/OpenAL/")
 # IO/Filesystem platform sources are added explicitly below via MERGED_SUPPORT_SOURCES.

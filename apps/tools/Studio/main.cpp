@@ -21,7 +21,9 @@
 #include <imgui.h>
 #include <imgui_impl_sdl3.h>
 #include <imgui_impl_sdlrenderer3.h>
-#include <imgui_freetype.h>
+// imgui_freetype.h is not shipped by FreeBSD's x11-toolkits/imgui port
+// (the FreeType backend isn't built). Studio doesn't actually call the
+// FreeType atlas builder, so the include is dropped here.
 #pragma pop_macro("DebugLog")
 #include <Poseidon/Foundation/Common/PlatformPaths.hpp>
 #include <cstdio>
