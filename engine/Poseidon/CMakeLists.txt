@@ -262,6 +262,11 @@ target_link_libraries(Poseidon PUBLIC
 if(NOT WIN32)
     target_link_libraries(Poseidon PUBLIC pthread dl)
 endif()
+if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+    # backtrace(3) / backtrace_symbols_fd(3) live in libexecinfo on FreeBSD,
+    # not in libc. CrashHandler.cpp pulls them in.
+    target_link_libraries(Poseidon PUBLIC execinfo)
+endif()
 
 if(WIN32)
     # MasterServerServiceClient + master-server publisher call WinSock /
