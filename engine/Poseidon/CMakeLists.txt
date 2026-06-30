@@ -316,7 +316,7 @@ target_link_libraries(Poseidon PRIVATE CLI11::CLI11)
 # exports a bare "freetype" target rather than the conventional
 # "Freetype::Freetype" name. CMake's bundled FindFreetype.cmake creates
 # the canonical alias.
-find_package(Freetype REQUIRED)
+find_package(Freetype CONFIG REQUIRED)
 target_link_libraries(Poseidon PUBLIC Freetype::Freetype)
 
 # stb — PNGWriter/TGAWriter and textures
