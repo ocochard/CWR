@@ -314,7 +314,13 @@ find_package(Freetype REQUIRED)
 target_link_libraries(Poseidon PUBLIC Freetype::Freetype)
 
 # stb — PNGWriter/TGAWriter and textures
-find_package(Stb REQUIRED)
+# vcpkg's Stb-Config flattens stb_*.h into a single include dir; FreeBSD's
+# devel/stb puts them under <prefix>/include/stb. Sources include them
+# unprefixed (#include <stb_image.h>), so point the include dir at /stb.
+find_path(Stb_INCLUDE_DIR
+    NAMES stb_image.h
+    PATH_SUFFIXES stb
+    REQUIRED)
 target_include_directories(Poseidon PRIVATE ${Stb_INCLUDE_DIR})
 
 # mimalloc
